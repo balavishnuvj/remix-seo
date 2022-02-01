@@ -112,7 +112,9 @@ export const otherRootRouteHandlers: Array<Handler> = [
 
 `generateSitemap` takes three params `request`, `EntryContext`, and `SEOOptions`.
 
-`SEOOptions` lets you configure the sitemap
+### Configuration
+
+- `SEOOptions` lets you configure the sitemap
 
 ```ts
 export type SEOOptions = {
@@ -124,6 +126,36 @@ export type SEOOptions = {
             "Cache-Control": `public, max-age=${60 * 5}`,
         },
   */
+};
+```
+
+- To not generate sitemap for a route
+
+```ts
+// in your routes/url-that-doesnt-need-sitemap
+import { SEOHandle } from "@balavishnuvj/remix-seo";
+
+export let loader: LoaderFunction = ({ request }) => {
+  /**/
+};
+
+export const handle: SEOHandle = {
+  getSitemapEntries: () => null,
+};
+```
+
+- To generate sitemap for dynamic routes
+
+```ts
+// routes/blog/$blogslug.tsx
+
+export const handle: SEOHandle = {
+  getSitemapEntries: async (request) => {
+    const blogs = await db.blog.findMany();
+    return blogs.map((joke) => {
+      return { route: `/blog/${blog.slug}`, priority: 0.7 };
+    });
+  },
 };
 ```
 
