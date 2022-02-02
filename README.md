@@ -152,7 +152,7 @@ export const handle: SEOHandle = {
 export const handle: SEOHandle = {
   getSitemapEntries: async (request) => {
     const blogs = await db.blog.findMany();
-    return blogs.map((joke) => {
+    return blogs.map((blog) => {
       return { route: `/blog/${blog.slug}`, priority: 0.7 };
     });
   },
