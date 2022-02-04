@@ -11,11 +11,13 @@ export async function generateSitemap(
   const sitemap = await getSitemapXml(request, remixEntryContent, {
     siteUrl,
   });
+  const bytes = new TextEncoder().encode(sitemap).byteLength
+  
   return new Response(sitemap, {
     headers: {
       ...headers,
       "Content-Type": "application/xml",
-      "Content-Length": String(Buffer.byteLength(sitemap)),
+      "Content-Length": String(bytes),
     },
   });
 }
