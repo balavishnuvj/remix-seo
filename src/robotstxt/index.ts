@@ -20,11 +20,13 @@ export async function generateRobotsTxt(
     ? [...defaultPolicies, ...policies]
     : policies;
   const robotText = await getRobotsText(policiesToUse);
+  const bytes = new TextEncoder().encode(robotText).byteLength;
+  
   return new Response(robotText, {
     headers: {
       ...headers,
       "Content-Type": "text/plain",
-      "Content-Length": String(Buffer.byteLength(robotText)),
+      "Content-Length": String(bytes),
     },
   });
 }
