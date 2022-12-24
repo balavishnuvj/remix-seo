@@ -1,6 +1,6 @@
 # Remix SEO
 
-Collection of SEO utilities like sitemap, robots.txt, etc. for a [Remix](https://remix.run/)
+Collection of SEO utilities like sitemap, robots.txt, etc. for a [Remix](https://remix.run/) Application.
 
 # Features
 
