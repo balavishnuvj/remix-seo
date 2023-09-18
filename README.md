@@ -1,5 +1,7 @@
 # Remix SEO
 
+A fork of https://github.com/balavishnuvj/remix-seo with some added bug fixes and features.
+
 Collection of SEO utilities like sitemap, robots.txt, etc. for a [Remix](https://remix.run/)
 
 # Features
@@ -12,7 +14,7 @@ Collection of SEO utilities like sitemap, robots.txt, etc. for a [Remix](https:/
 To use it, install it from npm (or yarn):
 
 ```sh
-npm install @balavishnuvj/remix-seo
+npm install @nasa-gcn/remix-seo
 ```
 
 # Usage
@@ -76,7 +78,7 @@ export default async function handleRequest(
 
 ## Sitemap
 
-To generate sitemap, `@balavishnuvj/remix-seo` would need context of all your routes.
+To generate sitemap, `@nasa-gcn/remix-seo` would need context of all your routes.
 
 If you have already created a file to handle all root routes. If not, [check above](#usage)
 
@@ -84,7 +86,7 @@ Add config for your sitemap
 
 ```ts
 import { EntryContext } from "remix";
-import { generateSitemap } from "@balavishnuvj/remix-seo";
+import { generateSitemap } from "@nasa-gcn/remix-seo";
 
 type Handler = (
   request: Request,
@@ -133,7 +135,7 @@ export type SEOOptions = {
 
 ```ts
 // in your routes/url-that-doesnt-need-sitemap
-import { SEOHandle } from "@balavishnuvj/remix-seo";
+import { SEOHandle } from "@nasa-gcn/remix-seo";
 
 export let loader: LoaderFunction = ({ request }) => {
   /**/
@@ -215,7 +217,7 @@ If you are using single function to create both `sitemap` and `robots.txt`
 
 ```ts
 import { EntryContext } from "remix";
-import { generateRobotsTxt, generateSitemap } from "@balavishnuvj/remix-seo";
+import { generateRobotsTxt, generateSitemap } from "@nasa-gcn/remix-seo";
 
 type Handler = (
   request: Request,

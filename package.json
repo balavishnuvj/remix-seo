@@ -1,7 +1,7 @@
 {
-  "name": "@balavishnuvj/remix-seo",
+  "name": "@nasa-gcn/remix-seo",
   "version": "1.0.1",
-  "description": "Collection of SEO utilities like sitemap, robots.txt, etc. for a Remix Application",
+  "description": "Collection of SEO utilities like sitemap, robots.txt, etc. for a Remix application",
   "main": "./build/index.js",
   "private": false,
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/balavishnuvj/remix-seo.git"
+    "url": "github:nasa-gcn/gcn.nasa.gov"
   },
   "keywords": [
     "remix",
@@ -21,11 +21,13 @@
     "robot.txt"
   ],
   "author": "Balavishnu V J <hello@balavishnuvj.com> (https://balavishnuvj.com)",
+  "contributors": [
+    {
+      "name": "Leo Singer",
+      "email": "leo.p.singer@nasa.gov"
+    }
+  ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/balavishnuvj/remix-seo/issues"
-  },
-  "homepage": "https://github.com/balavishnuvj/remix-seo#readme",
   "devDependencies": {
     "@types/lodash": "^4.14.178",
     "@types/node": "^17.0.13",
