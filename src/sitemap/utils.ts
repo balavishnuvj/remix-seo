@@ -1,6 +1,6 @@
 // This is adapted from https://github.com/kentcdodds/kentcdodds.com
 
-import { EntryContext } from "@remix-run/server-runtime";
+import type { ServerBuild } from "@remix-run/server-runtime";
 import { isEqual } from "lodash";
 import { SEOHandle, SitemapEntry } from "../types";
 
@@ -20,7 +20,7 @@ function removeTrailingSlash(s: string) {
 
 async function getSitemapXml(
   request: Request,
-  remixContext: EntryContext,
+  routes: ServerBuild["routes"],
   options: Options
 ) {
   const { siteUrl } = options;
@@ -43,7 +43,7 @@ async function getSitemapXml(
 
   const rawSitemapEntries = (
     await Promise.all(
-      Object.entries(remixContext.routeModules).map(async ([id, mod]) => {
+      Object.entries(routes).map(async ([id, { module: mod }]) => {
         if (id === "root") return;
 
         const handle = mod.handle as SEOHandle | undefined;
@@ -55,13 +55,13 @@ async function getSitemapXml(
         // (these are an opt-in via the getSitemapEntries method)
         if (!("default" in mod)) return;
 
-        const manifestEntry = remixContext.manifest.routes[id];
+        const manifestEntry = routes[id];
         if (!manifestEntry) {
           console.warn(`Could not find a manifest entry for ${id}`);
           return;
         }
         let parentId = manifestEntry.parentId;
-        let parent = parentId ? remixContext.manifest.routes[parentId] : null;
+        let parent = parentId ? routes[parentId] : null;
 
         let path;
         if (manifestEntry.path) {
@@ -79,7 +79,7 @@ async function getSitemapXml(
             : "";
           path = `${parentPath}/${path}`;
           parentId = parent.parentId;
-          parent = parentId ? remixContext.manifest.routes[parentId] : null;
+          parent = parentId ? routes[parentId] : null;
         }
 
         // we can't handle dynamic routes, so if the handle doesn't have a

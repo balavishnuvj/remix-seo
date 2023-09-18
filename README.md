@@ -17,100 +17,25 @@ npm install @balavishnuvj/remix-seo
 
 # Usage
 
-For all miscellaneous routes in root like `/robots.txt`, `/sitemap.xml`. We can create a single function to handle all of them instead polluting our `routes` folder.
+Add a sitemap and a robots.txt file to your site by adding [resource routes](https://remix.run/docs/en/main/guides/resource-routes) for them, as explained below.
 
-For that, lets create a file called `otherRootRoutes.server.ts` (file could be anything, make sure it is import only in server by ending with`.server.{ts|js}`)
+## Sitemap
+
+Add to your project a route moodule called `app/routes/sitemap[.]xml.ts` with the following contents.
 
 ```ts
-// otherRootRoutes.server.ts
+import { routes } from "@remix-run/dev/server-build";
+import type { LoaderArgs } from "@remix-run/node";
+import { generateSitemap } from "@balavishnuvj/remix-seo";
 
-import { EntryContext } from "remix";
-
-type Handler = (
-  request: Request,
-  remixContext: EntryContext
-) => Promise<Response | null> | null;
-
-export const otherRootRoutes: Record<string, Handler> = {};
-
-export const otherRootRouteHandlers: Array<Handler> = [
-  ...Object.entries(otherRootRoutes).map(([path, handler]) => {
-    return (request: Request, remixContext: EntryContext) => {
-      if (new URL(request.url).pathname !== path) return null;
-      return handler(request, remixContext);
-    };
-  }),
-];
-```
-
-and import this file in your `entry.server.tsx`
-
-```diff
-import { renderToString } from "react-dom/server";
-import { RemixServer } from "remix";
-import type { EntryContext } from "remix";
-+import { otherRootRouteHandlers } from "./otherRootRoutes.server";
-
-export default async function handleRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext
-) {
-+  for (const handler of otherRootRouteHandlers) {
-+    const otherRouteResponse = await handler(request, remixContext);
-+    if (otherRouteResponse) return otherRouteResponse;
-+  }
-  let markup = renderToString(
-    <RemixServer context={remixContext} url={request.url} />
-  );
-
-  responseHeaders.set("Content-Type", "text/html");
-
-  return new Response("<!DOCTYPE html>" + markup, {
-    status: responseStatusCode,
-    headers: responseHeaders,
+export function loader({ request }: LoaderArgs) {
+  return generateSitemap(request, routes, {
+    siteUrl: "https://balavishnuvj.com",
   });
 }
 ```
 
-## Sitemap
-
-To generate sitemap, `@balavishnuvj/remix-seo` would need context of all your routes.
-
-If you have already created a file to handle all root routes. If not, [check above](#usage)
-
-Add config for your sitemap
-
-```ts
-import { EntryContext } from "remix";
-import { generateSitemap } from "@balavishnuvj/remix-seo";
-
-type Handler = (
-  request: Request,
-  remixContext: EntryContext
-) => Promise<Response | null> | null;
-
-export const otherRootRoutes: Record<string, Handler> = {
-  "/sitemap.xml": async (request, remixContext) => {
-    return generateSitemap(request, remixContext, {
-      siteUrl: "https://balavishnuvj.com",
-    });
-  },
-};
-
-export const otherRootRouteHandlers: Array<Handler> = [
-  ...Object.entries(otherRootRoutes).map(([path, handler]) => {
-    return (request: Request, remixContext: EntryContext) => {
-      if (new URL(request.url).pathname !== path) return null;
-
-      return handler(request, remixContext);
-    };
-  }),
-];
-```
-
-`generateSitemap` takes three params `request`, `EntryContext`, and `SEOOptions`.
+`generateSitemap` takes three params `request`, `routes`, and `SEOOptions`.
 
 ### Configuration
 
@@ -161,15 +86,20 @@ export const handle: SEOHandle = {
 
 ## Robots
 
-You can add this part of the root routes as did above[check above](#usage). Or else you can create a new file in your `routes` folder with `robots[.txt].ts`
+Add a new route module with the filename `app/routes/robots[.txt].ts` and the
+following contents:
 
 To generate `robots.txt`
 
 ```ts
-generateRobotsTxt([
-  { type: "sitemap", value: "https://balavishnuvj.com/sitemap.xml" },
-  { type: "disallow", value: "/admin" },
-]);
+import { generateRobotsTxt } from '@balavishnuvj/remix-seo'
+
+export function loader() {
+  return generateRobotsTxt([
+    { type: "sitemap", value: "https://balavishnuvj.com/sitemap.xml" },
+    { type: "disallow", value: "/admin" },
+  ]);
+}
 ```
 
 `generateRobotsTxt` takes two arguments.
@@ -209,43 +139,4 @@ export type RobotsConfig = {
         },
   */
 };
-```
-
-If you are using single function to create both `sitemap` and `robots.txt`
-
-```ts
-import { EntryContext } from "remix";
-import { generateRobotsTxt, generateSitemap } from "@balavishnuvj/remix-seo";
-
-type Handler = (
-  request: Request,
-  remixContext: EntryContext
-) => Promise<Response | null> | null;
-
-export const otherRootRoutes: Record<string, Handler> = {
-  "/sitemap.xml": async (request, remixContext) => {
-    return generateSitemap(request, remixContext, {
-      siteUrl: "https://balavishnuvj.com",
-      headers: {
-        "Cache-Control": `public, max-age=${60 * 5}`,
-      },
-    });
-  },
-  "/robots.txt": async () => {
-    return generateRobotsTxt([
-      { type: "sitemap", value: "https://balavishnuvj.com/sitemap.xml" },
-      { type: "disallow", value: "/admin" },
-    ]);
-  },
-};
-
-export const otherRootRouteHandlers: Array<Handler> = [
-  ...Object.entries(otherRootRoutes).map(([path, handler]) => {
-    return (request: Request, remixContext: EntryContext) => {
-      if (new URL(request.url).pathname !== path) return null;
-
-      return handler(request, remixContext);
-    };
-  }),
-];
 ```
