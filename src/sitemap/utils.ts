@@ -1,7 +1,7 @@
 // This is adapted from https://github.com/kentcdodds/kentcdodds.com
 
 import { EntryContext } from "@remix-run/server-runtime";
-import isEqual from "lodash.isequal";
+import { isEqual } from "lodash";
 import { SEOHandle, SitemapEntry } from "../types";
 
 type Options = {
